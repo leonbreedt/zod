@@ -3,8 +3,8 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.sap.cloud.platform.visualization.services</groupId>
-    <artifactId>zod</artifactId>
+    <groupId>io.sector42.zod</groupId>
+    <artifactId>server</artifactId>
     <packaging>jar</packaging>
     <version>0.0.1</version>
 
