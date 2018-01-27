@@ -7,12 +7,13 @@ import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.undertow.security.api.AuthenticationMechanism;
 import io.undertow.security.api.SecurityContext;
-import io.undertow.security.idm.Account;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class JWTBearerTokenAuthenticationMechanism implements AuthenticationMechanism {
     private static final String BEARER_PREFIX = "Bearer ";
@@ -22,12 +23,14 @@ public class JWTBearerTokenAuthenticationMechanism implements AuthenticationMech
     private final JWTVerifier verifier;
     private final String name;
     private final JWTAuthorizationCallback authorizationCallback;
+    private Map<String, TokenCacheEntry> tokenCache;
 
     public JWTBearerTokenAuthenticationMechanism(JWTVerifier verifier, JWTAuthorizationCallback authorizationCallback) {
         assert verifier != null : "Token verifier is required";
         this.verifier = verifier;
         this.name = "JWT";
         this.authorizationCallback = authorizationCallback;
+        tokenCache = new HashMap<>();
     }
 
     @Override
@@ -51,7 +54,7 @@ public class JWTBearerTokenAuthenticationMechanism implements AuthenticationMech
                 }
 
                 try {
-                    DecodedJWT token = verifier.verify(tokenValue);
+                    DecodedJWT token = getPossiblyCachedToken(tokenValue);
                     JWTAccount account = new JWTAccount(token);
                     boolean isAuthorized = authorizationCallback == null || authorizationCallback.isPermitted(exchange, account);
                     if (isAuthorized) {
@@ -85,4 +88,32 @@ public class JWTBearerTokenAuthenticationMechanism implements AuthenticationMech
         return ChallengeResult.NOT_SENT;
     }
 
+    private DecodedJWT getPossiblyCachedToken(String tokenValue) {
+        TokenCacheEntry entry = tokenCache.get(tokenValue);
+        if (entry != null && !entry.isExpired()) {
+            return entry.getToken();
+        } else {
+            DecodedJWT token = verifier.verify(tokenValue);
+            tokenCache.put(tokenValue, new TokenCacheEntry(token));
+            return token;
+        }
+    }
+
+    private static class TokenCacheEntry {
+        private final long expiryDateMillis;
+        private final DecodedJWT token;
+
+        TokenCacheEntry(DecodedJWT token) {
+            this.token = token;
+            this.expiryDateMillis = token.getExpiresAt().getTime();
+        }
+
+        public boolean isExpired() {
+            return System.currentTimeMillis() > expiryDateMillis;
+        }
+
+        public DecodedJWT getToken() {
+            return token;
+        }
+    }
 }
