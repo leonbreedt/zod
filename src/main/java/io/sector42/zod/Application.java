@@ -6,16 +6,14 @@ import io.undertow.server.HttpHandler;
 import io.undertow.server.RoutingHandler;
 
 public class Application {
+    // key obtained by running ./bin/tokens.sh
     private static final String ISSUER_PUBLIC_KEY =
         "-----BEGIN PUBLIC KEY-----\n" +
-        "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA33TqqLR3eeUmDtHS89qF\n" +
-        "3p4MP7Wfqt2Zjj3lZjLjjCGDvwr9cJNlNDiuKboODgUiT4ZdPWbOiMAfDcDzlOxA\n" +
-        "04DDnEFGAf+kDQiNSe2ZtqC7bnIc8+KSG/qOGQIVaay4Ucr6ovDkykO5Hxn7OU7s\n" +
-        "Jp9TP9H0JH8zMQA6YzijYH9LsupTerrY3U6zyihVEDXXOv08vBHk50BMFJbE9iwF\n" +
-        "wnxCsU5+UZUZYw87Uu0n4LPFS9BT8tUIvAfnRXIEWCha3KbFWmdZQZlyrFw0buUE\n" +
-        "f0YN3/Q0auBkdbDR/ES2PbgKTJdkjc/rEeM0TxvOUf7HuUNOhrtAVEN1D5uuxE1W\n" +
-        "SwIDAQAB\n" +
-        "-----END PUBLIC KEY-----\n";
+        "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC/kjqmJDtBxIwYrMz8Q20aDSfp\n" +
+        "1Y8SuRgUJL1jCobBfEnF56kO+mb+3xnUXaEoibJEsmXTpGtGjAJHKKyzQFaXp/JY\n" +
+        "b9VFe/nX/z1l5Lq1O2gXNadqIXgqferH+8oWc9iUk4e9qLuRKVk/IRYvhP42YJm0\n" +
+        "AVWU1oFfWBHJhcCgPQIDAQAB\n" +
+        "-----END PUBLIC KEY-----";
 
     private static final Person person = new Person("Leon", "Breedt");
 

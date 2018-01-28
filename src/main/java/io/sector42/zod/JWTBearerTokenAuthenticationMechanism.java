@@ -10,10 +10,7 @@ import io.undertow.security.api.SecurityContext;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.Headers;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 public class JWTBearerTokenAuthenticationMechanism implements AuthenticationMechanism {
     private static final String BEARER_PREFIX = "Bearer ";
@@ -105,7 +102,9 @@ public class JWTBearerTokenAuthenticationMechanism implements AuthenticationMech
 
         TokenCacheEntry(DecodedJWT token) {
             this.token = token;
-            this.expiryDateMillis = token.getExpiresAt().getTime();
+            this.expiryDateMillis = token.getExpiresAt() != null
+                ? token.getExpiresAt().getTime()
+                : System.currentTimeMillis() + 900;
         }
 
         public boolean isExpired() {
